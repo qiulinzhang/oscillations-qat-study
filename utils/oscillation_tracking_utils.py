@@ -54,7 +54,7 @@ class TrackOscillation:
 
         # Apply weight freezing
         if self.frozen is not None: # 针对冻结矩阵将 x_int 的一部分填充为冻结后的x_int,即 self.frozen_x_int
-            x_int = ~self.frozen * x_int + self.frozen * self.frozen_x_int
+            x_int = ~self.frozen * x_int + self.frozen * self.frozen_x_int # 这里的self.frozen_x_int 是之前累计的需要freeze的权重
 
         if skip_tracking: # 如果不跟踪震荡频率，可以直接返回
             return x_int
@@ -95,7 +95,8 @@ class TrackOscillation:
                 else: # 如果不采用EMA来统计
                     self.frozen_x_int[freeze_weights] = x_int[freeze_weights] # 那么就把那些需要freeze的x_int 赋值给 self.frozen_x_int
 
-        return x_int # 
+        # 当前统计的需要freeze的权重不会被使用，得到下一次才会被使用, 第57行
+        return x_int 
 
     def check_init(self, x_int):
         if self.prev_x_int is None:
